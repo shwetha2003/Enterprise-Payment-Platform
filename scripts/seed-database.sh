@@ -1,0 +1,93 @@
+#!/bin/bash
+
+# Seed script for populating the database with sample data
+
+echo "Seeding database with sample data..."
+
+# Wait for PostgreSQL to be ready
+until PGPASSWORD=securepass123 psql -h localhost -U admin -d payment_db -c '\q' 2>/dev/null; do
+  echo "Waiting for PostgreSQL..."
+  sleep 2
+done
+
+# Insert sample customers
+echo "Inserting sample customers..."
+PGPASSWORD=securepass123 psql -h localhost -U admin -d payment_db << EOF
+INSERT INTO customers (id, company_name, tax_id, credit_limit, payment_terms, risk_score) 
+VALUES 
+('11111111-1111-1111-1111-111111111111', 'Acme Corporation', '12-3456789', 100000.00, 30, 0.3),
+('22222222-2222-2222-2222-222222222222', 'Globex Corporation', '98-7654321', 50000.00, 15, 0.7),
+('33333333-3333-3333-3333-333333333333', 'Stark Industries', '45-6789012', 250000.00, 45, 0.2),
+('44444444-4444-4444-4444-444444444444', 'Wayne Enterprises', '23-4567890', 150000.00, 30, 0.4),
+('55555555-5555-5555-5555-555555555555', 'Cyberdyne Systems', '67-8901234', 75000.00, 30, 0.8),
+('66666666-6666-6666-6666-666666666666', 'Umbrella Corporation', '89-0123456', 120000.00, 60, 0.6),
+('77777777-7777-7777-7777-777777777777', 'Oscorp Industries', '34-5678901', 90000.00, 30, 0.5),
+('88888888-8888-8888-8888-888888888888', 'Initech', '56-7890123', 40000.00, 30, 0.4),
+('99999999-9999-9999-9999-999999999999', 'Hooli', '78-9012345', 300000.00, 45, 0.3),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Pied Piper', '90-1234567', 50000.00, 15, 0.9)
+ON CONFLICT DO NOTHING;
+EOF
+
+# Insert sample products
+echo "Inserting sample products..."
+PGPASSWORD=securepass123 psql -h localhost -U admin -d payment_db << EOF
+INSERT INTO products (id, sku, name, description, unit_price, category, status) 
+VALUES 
+('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'ENT-LICENSE', 'Enterprise License', 'Annual enterprise software license with premium features', 25000.00, 'Software', 'ACTIVE'),
+('cccccccc-cccc-cccc-cccc-cccccccccccc', 'CLOUD-1TB', 'Cloud Storage 1TB', 'Monthly cloud storage subscription with 99.9% SLA', 500.00, 'Cloud', 'ACTIVE'),
+('dddddddd-dddd-dddd-dddd-dddddddddddd', 'API-1M', 'API Calls Package', 'Package of 1 million API calls per month', 1000.00, 'API', 'ACTIVE'),
+('eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 'SUPPORT-PREMIUM', 'Premium Support', '24/7 premium technical support with 1-hour response time', 2000.00, 'Services', 'ACTIVE'),
+('ffffffff-ffff-ffff-ffff-ffffffffffff', 'BACKUP-ENTERPRISE', 'Enterprise Backup', 'Automated backup and disaster recovery solution', 1500.00, 'Backup', 'ACTIVE'),
+('11111111-1111-1111-1111-111111111112', 'SECURITY-SUITE', 'Security Suite', 'Advanced cybersecurity protection suite', 3000.00, 'Security', 'ACTIVE'),
+('11111111-1111-1111-1111-111111111113', 'ANALYTICS-PRO', 'Analytics Pro', 'Business intelligence and analytics platform', 4000.00, 'Analytics', 'ACTIVE')
+ON CONFLICT DO NOTHING;
+EOF
+
+# Insert sample subscriptions
+echo "Inserting sample subscriptions..."
+PGPASSWORD=securepass123 psql -h localhost -U admin -d payment_db << EOF
+INSERT INTO subscriptions (id, subscription_number, customer_id, plan_code, status, billing_cycle, billing_day, amount, start_date, auto_renew) 
+VALUES 
+('22222222-2222-2222-2222-222222222223', 'SUB-2023-001', '11111111-1111-1111-1111-111111111111', 'ENT-LICENSE', 'ACTIVE', 'ANNUAL', 15, 25000.00, '2023-01-15', true),
+('22222222-2222-2222-2222-222222222224', 'SUB-2023-002', '22222222-2222-2222-2222-222222222222', 'CLOUD-1TB', 'ACTIVE', 'MONTHLY', 1, 500.00, '2023-02-01', true),
+('22222222-2222-2222-2222-222222222225', 'SUB-2023-003', '33333333-3333-3333-3333-333333333333', 'API-1M', 'ACTIVE', 'MONTHLY', 10, 1000.00, '2023-03-10', true),
+('22222222-2222-2222-2222-222222222226', 'SUB-2023-004', '44444444-4444-4444-4444-444444444444', 'SUPPORT-PREMIUM', 'ACTIVE', 'QUARTERLY', 20, 2000.00, '2023-04-20', true),
+('22222222-2222-2222-2222-222222222227', 'SUB-2023-005', '55555555-5555-5555-5555-555555555555', 'BACKUP-ENTERPRISE', 'ACTIVE', 'MONTHLY', 5, 1500.00, '2023-05-05', true)
+ON CONFLICT DO NOTHING;
+EOF
+
+# Insert sample invoices
+echo "Inserting sample invoices..."
+PGPASSWORD=securepass123 psql -h localhost -U admin -d payment_db << EOF
+INSERT INTO invoices (id, invoice_number, subscription_id, customer_id, invoice_date, due_date, subtotal, tax, total, status) 
+VALUES 
+('33333333-3333-3333-3333-333333333331', 'INV-2023-001', '22222222-2222-2222-2222-222222222223', '11111111-1111-1111-1111-111111111111', '2023-01-15', '2023-02-14', 25000.00, 2000.00, 27000.00, 'PAID'),
+('33333333-3333-3333-3333-333333333332', 'INV-2023-002', '22222222-2222-2222-2222-222222222224', '22222222-2222-2222-2222-222222222222', '2023-02-01', '2023-03-03', 500.00, 40.00, 540.00, 'PAID'),
+('33333333-3333-3333-3333-333333333333', 'INV-2023-003', '22222222-2222-2222-2222-222222222225', '33333333-3333-3333-3333-333333333333', '2023-03-10', '2023-04-09', 1000.00, 80.00, 1080.00, 'PAID'),
+('33333333-3333-3333-3333-333333333334', 'INV-2023-004', '22222222-2222-2222-2222-222222222226', '44444444-4444-4444-4444-444444444444', '2023-04-20', '2023-05-20', 2000.00, 160.00, 2160.00, 'PAID'),
+('33333333-3333-3333-3333-333333333335', 'INV-2023-005', '22222222-2222-2222-2222-222222222227', '55555555-5555-5555-5555-555555555555', '2023-05-05', '2023-06-04', 1500.00, 120.00, 1620.00, 'OVERDUE'),
+('33333333-3333-3333-3333-333333333336', 'INV-2023-006', NULL, '66666666-6666-6666-6666-666666666666', '2023-06-01', '2023-07-01', 4500.00, 360.00, 4860.00, 'ISSUED'),
+('33333333-3333-3333-3333-333333333337', 'INV-2023-007', NULL, '77777777-7777-7777-7777-777777777777', '2023-06-15', '2023-07-15', 3200.00, 256.00, 3456.00, 'PARTIALLY_PAID'),
+('33333333-3333-3333-3333-333333333338', 'INV-2023-008', NULL, '88888888-8888-8888-8888-888888888888', '2023-05-20', '2023-06-19', 1800.00, 144.00, 1944.00, 'OVERDUE'),
+('33333333-3333-3333-3333-333333333339', 'INV-2023-009', NULL, '99999999-9999-9999-9999-999999999999', '2023-04-10', '2023-05-10', 12000.00, 960.00, 12960.00, 'PAID'),
+('33333333-3333-3333-3333-333333333340', 'INV-2023-010', NULL, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '2023-03-25', '2023-04-24', 800.00, 64.00, 864.00, 'PAID')
+ON CONFLICT DO NOTHING;
+EOF
+
+# Insert sample payments
+echo "Inserting sample payments..."
+PGPASSWORD=securepass123 psql -h localhost -U admin -d payment_db << EOF
+INSERT INTO payments (id, payment_reference, invoice_id, customer_id, amount, payment_method, payment_date, status) 
+VALUES 
+('44444444-4444-4444-4444-444444444441', 'PAY-2023-001', '33333333-3333-3333-3333-333333333331', '11111111-1111-1111-1111-111111111111', 27000.00, 'CREDIT_CARD', '2023-02-10 10:30:00', 'COMPLETED'),
+('44444444-4444-4444-4444-444444444442', 'PAY-2023-002', '33333333-3333-3333-3333-333333333332', '22222222-2222-2222-2222-222222222222', 540.00, 'ACH', '2023-02-28 14:45:00', 'COMPLETED'),
+('44444444-4444-4444-4444-444444444443', 'PAY-2023-003', '33333333-3333-3333-3333-333333333333', '33333333-3333-3333-3333-333333333333', 1080.00, 'CREDIT_CARD', '2023-04-05 09:15:00', 'COMPLETED'),
+('44444444-4444-4444-4444-444444444444', 'PAY-2023-004', '33333333-3333-3333-3333-333333333334', '44444444-4444-4444-4444-444444444444', 2160.00, 'WIRE', '2023-05-18 16:20:00', 'COMPLETED'),
+('44444444-4444-4444-4444-444444444445', 'PAY-2023-005', '33333333-3333-3333-3333-333333333337', '77777777-7777-7777-7777-777777777777', 1000.00, 'CREDIT_CARD', '2023-06-20 11:30:00', 'COMPLETED'),
+('44444444-4444-4444-4444-444444444446', 'PAY-2023-006', '33333333-3333-3333-3333-333333333339', '99999999-9999-9999-9999-999999999999', 12960.00, 'ACH', '2023-05-05 13:45:00', 'COMPLETED'),
+('44444444-4444-4444-4444-444444444447', 'PAY-2023-007', '33333333-3333-3333-3333-333333333340', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 864.00, 'CREDIT_CARD', '2023-04-20 10:00:00', 'COMPLETED'),
+('44444444-4444-4444-4444-444444444448', 'PAY-2023-008', '33333333-3333-3333-3333-333333333335', '55555555-5555-5555-5555-555555555555', 500.00, 'CREDIT_CARD', '2023-06-10 15:30:00', 'FAILED')
+ON CONFLICT DO NOTHING;
+EOF
+
+echo "Database seeding completed!"

@@ -1,0 +1,67 @@
+enterprise-payment-platform/
+├── README.md
+├── docker-compose.yml
+├── .gitignore
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml
+├── payment-service/
+│   ├── src/
+│   │   └── main/
+│   │       ├── java/com/enterprise/
+│   │       │   ├── PaymentServiceApplication.java
+│   │       │   ├── config/
+│   │       │   ├── controller/
+│   │       │   ├── service/
+│   │       │   ├── repository/
+│   │       │   ├── model/
+│   │       │   ├── dto/
+│   │       │   ├── exception/
+│   │       │   └── security/
+│   │       └── resources/
+│   │           ├── application.yml
+│   │           └── db/
+│   ├── Dockerfile
+│   ├── pom.xml
+│   └── README.md
+├── commerce-service/
+│   ├── src/
+│   │   └── main/
+│   │       ├── java/com/enterprise/commerce/
+│   │       └── resources/
+│   ├── Dockerfile
+│   ├── pom.xml
+│   └── README.md
+├── analytics-service/
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   ├── models/
+│   │   ├── services/
+│   │   └── utils/
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   ├── ml_models/
+│   └── README.md
+├── web-portal/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── utils/
+│   │   └── App.tsx
+│   ├── public/
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── README.md
+├── infrastructure/
+│   ├── init.sql
+│   ├── prometheus.yml
+│   └── grafana/
+├── docs/
+│   ├── api/
+│   ├── architecture.md
+│   └── deployment.md
+└── scripts/
+    └── seed-database.sh
